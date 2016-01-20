@@ -1,2 +1,2 @@
-from app.appmain import app
+from snapyapp.appmain import app
 app.run(host='0.0.0.0', port=5000, debug=True)
