@@ -1,3 +1,3 @@
-from anpyapp.appmain import app
+from snapyapp.appmain import app
 if __name__ == "__main__":
 	app.run()
