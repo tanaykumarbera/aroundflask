@@ -1,38 +1,58 @@
 from models import db
 from device import Device
+import requests
+import json
 
 class User(db.Model):
 	__tablename__ = 'user'
 
-	id = 			db.Column(db.Integer, primary_key = True)
-	fb_id = 		db.Column(db.Integer)
-	fb_username = 	db.Column(db.Unicode)
-	fb_email = 		db.Column(db.Unicode)
-	fb_firstname = 	db.Column(db.Unicode)
-	fb_lastname = 	db.Column(db.Unicode)
-	fb_name = 		db.Column(db.Unicode)
-	fb_dp = 		db.Column(db.Text)
-	fb_country = 	db.Column(db.Unicode)
-	fb_gender = 	db.Column(db.Unicode)
-	add_date = 		db.Column(db.DateTime)
-	devices = 		db.relationship('Device', backref='user', lazy='select')
+	id = 		db.Column(db.Integer, primary_key = True)
+	fb_id = 	db.Column(db.Integer)
+	fb_dp = 	db.Column(db.Text)
+	email = 	db.Column(db.Unicode)
+	firstname = db.Column(db.Unicode)
+	lastname = 	db.Column(db.Unicode)
+	name = 		db.Column(db.Unicode)
+	gender = 	db.Column(db.Unicode)
+	add_date = 	db.Column(db.DateTime)
+	devices = 	db.relationship('Device', backref='user', lazy='select')
 
+	userDetails = dict()
 
-	def isUserExist(self, email):
-		user = self.query.filter_by(fb_email=email).first()
+	def isUserExist(self, params):
+		if 'fb_token' in params:
+			self.setUserDetailFromFacebook(params['fb_token'])
+			return self.isUserExist({'email': self.userDetails['email']})
+		elif 'email' in params:
+			user = self.query.filter_by(email=params['email']).first()
+		else:
+			user = None
 		return user
 
 	def addUser(self, params):
-		self.fb_id = params['fb_id']
-		self.fb_username = params['fb_username']
-		self.fb_email = params['fb_email']
-		self.fb_firstname = params['fb_firstname']
-		self.fb_lastname = params['fb_lastname']
-		self.fb_name = params['fb_name']
-		self.fb_dp = params['fb_dp']
-		self.fb_country = params['fb_country']
-		self.fb_gender = params['fb_gender']
-
+		if 'fb_token' in params:
+			return self.addUser(self.userDetails)
+		else:
+			self.fb_id = params['fb_id']
+			self.fb_dp = params['fb_dp']
+			self.email = params['email']
+			self.firstname = params['firstname']
+			self.lastname = params['lastname']
+			self.name = params['name']
+			self.gender = params['gender']
 		db.session.add(self)
 		db.session.commit()
 		return self
+
+	def setUserDetailFromFacebook(self, fb_token):
+		fb_url = "https://graph.facebook.com/me?access_token="+fb_token+"&fields=id,email,first_name,last_name,name,gender"
+		res = requests.get(fb_url)
+		res = json.loads(res.text)
+		self.userDetails['fb_id'] = res['id']
+		self.userDetails['fb_dp'] = "http://graph.facebook.com/"+str(res['id'])+"/picture?type=large"
+		self.userDetails['email'] = res['email']
+		self.userDetails['firstname'] = res['first_name']
+		self.userDetails['lastname'] = res['last_name']
+		self.userDetails['name'] = res['name']
+		self.userDetails['gender'] = res['gender']
+

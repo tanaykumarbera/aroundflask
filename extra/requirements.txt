@@ -3,3 +3,4 @@ flask
 flask-restful
 validate_email
 flask-sqlalchemy
+requests
