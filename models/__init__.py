@@ -1,4 +1,4 @@
-from snapyapp.appmain import app
+from snapyapp.appmain import application
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(application)

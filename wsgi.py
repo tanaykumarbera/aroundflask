@@ -1,3 +1,3 @@
-from snapyapp.appmain import app
+from snapyapp.appmain import application
 if __name__ == "__main__":
-	app.run()
+	application.run()
