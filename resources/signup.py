@@ -1,6 +1,8 @@
 from flask import request, jsonify
 from flask_restful import Resource, reqparse
-from common.models import Models
+from models.user import User
+from models.token import Token
+from models.device import Device
 from common.errorhandler import ErrorHandler
 
 
@@ -24,13 +26,20 @@ post_parser.add_argument('device_name', location='form', help='')
 class Signup(Resource):
 	def post(self):
 		args = post_parser.parse_args()
-		models = Models()
-		user = models.isUserExist(args['fb_email'])
+		userModel = User()
+		tokenModel = Token()
+		deviceModel = Device()
+		user = userModel.isUserExist(args['fb_email'])
 		if user:
-			userId = user['id']
+			token_id = user.devices[0].token_id
+			token = tokenModel.getTokenById(token_id)
+			response = {"token" : token.token}
 		else:
-			userId = models.addUser(args)
-		response = {"newUserId" : userId}
-		#return jsonify(response)
-		del(models)
+			newUser = userModel.addUser(args)
+			newToken = tokenModel.createNewToken()
+			args['user_id'] = newUser.id
+			args['token_id'] = newToken.id
+			newDevice = deviceModel.addDevice(args)
+			response = {"token" : newToken.token}
+
 		return response, 200

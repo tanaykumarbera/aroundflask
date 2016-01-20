@@ -1,5 +1,5 @@
 gunicorn
 flask
 flask-restful
-mysql-python
 validate_email
+flask-sqlalchemy
