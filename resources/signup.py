@@ -36,9 +36,8 @@ class Signup(Resource):
 					args['token_id'] = token.id
 					newDevice = deviceModel.addDevice(args)
 				else:
-					token_id = device.token_id
-					tokenModel.updateFbToken(token_id, args)
-					token = tokenModel.getTokenById(token_id)
+					device.token.updateToken(device.token.id)
+					token = device.token
 				response = {"token" : token.token}
 			else:
 				newUser = userModel.addUser(args)

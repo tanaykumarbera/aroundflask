@@ -11,6 +11,8 @@ application.config.update(dbconfig)
 application.config.update(globalconfig)
 
 from resources.signup import Signup
+from resources.verifylogin import VerifyLogin
 
 api = Api(application)
 api.add_resource(Signup, '/signup')
+api.add_resource(VerifyLogin, '/verifylogin')

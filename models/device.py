@@ -1,4 +1,5 @@
 from models import db
+from token import Token
 
 class Device(db.Model):
 	__tablename__ = 'device'
@@ -8,8 +9,9 @@ class Device(db.Model):
 	device_name = 		db.Column(db.Unicode)
 	user_id = 			db.Column(db.Integer, db.ForeignKey('user.id'))
 	add_date = 			db.Column(db.DateTime)
-	token_id = 			db.Column(db.Integer, db.ForeignKey('token.id'))
+	token_id = 			db.Column(db.Integer, db.ForeignKey(Token.id))
 	last_logged_in = 	db.Column(db.DateTime)
+	token = 			db.relationship('Token', uselist=False)
 
 
 	def addDevice(self, params):
@@ -20,3 +22,9 @@ class Device(db.Model):
 		db.session.add(self)
 		db.session.commit()
 		return self
+
+	def getDeviceByDeviceId(self, params):
+		device = self.query.filter_by(device_id=params['device_id']).first()
+		if device is None:
+			raise Exception("This device is not signed up before")
+		return device

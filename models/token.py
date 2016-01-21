@@ -1,7 +1,6 @@
 from models import db
 from datetime import datetime, timedelta
 from md5 import md5
-from device import Device
 
 class Token(db.Model):
 	__tablename__ = 'token'
@@ -10,12 +9,11 @@ class Token(db.Model):
 	token =  	db.Column(db.Unicode)
 	fb_token =  db.Column(db.Text)
 	expiry = 	db.Column(db.DateTime)
-	devices = 	db.relationship('Device', backref='token', lazy='select')
 
 	def createNewToken(self, params):
 		self.token = md5(datetime.now().strftime("%b%d%Y%h%m%s%f")).hexdigest()
 		self.fb_token = params['fb_token']
-		self.expiry = datetime.now() + timedelta(days=10)
+		self.expiry = datetime.now() + timedelta(days=60)
 		db.session.add(self)
 		db.session.commit()
 		return self
@@ -27,7 +25,10 @@ class Token(db.Model):
 	def getToken(self, token):
 		token = self.query.filter_by(token=token)
 
-	def updateFbToken(self, token_id, params):
+	def updateToken(self, token_id, params=dict()):
 		token = self.query.get(token_id)
-		token.fb_token = params['fb_token']
+		if 'fb_token' in params:
+			token.fb_token = params['fb_token']
+		token.expiry = datetime.now() + timedelta(days=60)
+		token.token = md5(datetime.now().strftime("%b%d%Y%h%m%s%f")).hexdigest()
 		db.session.commit()
