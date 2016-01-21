@@ -6,9 +6,6 @@ from models.device import Device
 from models.appversion import AppVeriosn
 from common.errorhandler import ErrorHandler
 
-
-todos = {}
-
 post_parser = reqparse.RequestParser(bundle_errors=True)
 errorHandler = ErrorHandler()
 
@@ -23,21 +20,34 @@ class Signup(Resource):
 			args = post_parser.parse_args()
 			userModel = User()
 			tokenModel = Token()
+			deviceModel = Device()
 			appVersion = AppVeriosn()
 			minv, recentv = appVersion.getLatestVersion()
 			user = userModel.isUserExist(args)
 			if user:
-				token_id = user.devices[0].token_id
-				token = tokenModel.getTokenById(token_id)
+				device = None
+				for d in user.devices:
+					if args['device_id'] == d.device_id:
+						device = d
+						break
+				if device is None:
+					token = tokenModel.createNewToken(args)
+					args['user_id'] = user.id
+					args['token_id'] = token.id
+					newDevice = deviceModel.addDevice(args)
+				else:
+					token_id = device.token_id
+					tokenModel.updateFbToken(token_id, args)
+					token = tokenModel.getTokenById(token_id)
 				response = {"token" : token.token}
 			else:
-				deviceModel = Device()
 				newUser = userModel.addUser(args)
-				newToken = tokenModel.createNewToken()
+				newToken = tokenModel.createNewToken(args)
 				args['user_id'] = newUser.id
 				args['token_id'] = newToken.id
 				newDevice = deviceModel.addDevice(args)
 				response = {"token" : newToken.token}
+
 			response['min'] = minv
 			response['recent'] = recentv
 			return response, 200
