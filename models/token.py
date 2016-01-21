@@ -25,10 +25,11 @@ class Token(db.Model):
 	def getToken(self, token):
 		token = self.query.filter_by(token=token)
 
-	def updateToken(self, token_id, params=dict()):
+	def updateToken(self, token_id, updateToken=True, params=dict()):
 		token = self.query.get(token_id)
 		if 'fb_token' in params:
 			token.fb_token = params['fb_token']
+		if updateToken is True:
+			token.token = md5(datetime.now().strftime("%b%d%Y%h%m%s%f")).hexdigest()
 		token.expiry = datetime.now() + timedelta(days=60)
-		token.token = md5(datetime.now().strftime("%b%d%Y%h%m%s%f")).hexdigest()
 		db.session.commit()

@@ -26,7 +26,7 @@ class VerifyLogin(Resource):
 				fb_url = "https://graph.facebook.com/me?access_token="+device.token.fb_token+"&fields=id,email,first_name,last_name,name,gender"
 				res = requests.get(fb_url)
 				if res.status_code == 200 :
-					device.token.updateToken(device.token.id)
+					device.token.updateToken(device.token.id, False)
 					response['token'] = device.token.token
 					response['min'] = minv
 					response['recent'] = recentv

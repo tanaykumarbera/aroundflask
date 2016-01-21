@@ -36,7 +36,7 @@ class Signup(Resource):
 					args['token_id'] = token.id
 					newDevice = deviceModel.addDevice(args)
 				else:
-					device.token.updateToken(device.token.id)
+					device.token.updateToken(device.token.id, True, args)
 					token = device.token
 				response = {"token" : token.token}
 			else:
