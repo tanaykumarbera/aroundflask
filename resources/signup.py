@@ -18,24 +18,29 @@ post_parser.add_argument('device_name', location='form', help='')
 
 class Signup(Resource):
 	def post(self):
-		args = post_parser.parse_args()
-		userModel = User()
-		tokenModel = Token()
-		appVersion = AppVeriosn()
-		minv, recentv = appVersion.getLatestVersion()
-		user = userModel.isUserExist(args)
-		if user:
-			token_id = user.devices[0].token_id
-			token = tokenModel.getTokenById(token_id)
-			response = {"token" : token.token}
-		else:
-			deviceModel = Device()
-			newUser = userModel.addUser(args)
-			newToken = tokenModel.createNewToken()
-			args['user_id'] = newUser.id
-			args['token_id'] = newToken.id
-			newDevice = deviceModel.addDevice(args)
-			response = {"token" : newToken.token}
-		response['min'] = minv
-		response['recent'] = recentv
-		return response, 200
+		response = dict()
+		try :
+			args = post_parser.parse_args()
+			userModel = User()
+			tokenModel = Token()
+			appVersion = AppVeriosn()
+			minv, recentv = appVersion.getLatestVersion()
+			user = userModel.isUserExist(args)
+			if user:
+				token_id = user.devices[0].token_id
+				token = tokenModel.getTokenById(token_id)
+				response = {"token" : token.token}
+			else:
+				deviceModel = Device()
+				newUser = userModel.addUser(args)
+				newToken = tokenModel.createNewToken()
+				args['user_id'] = newUser.id
+				args['token_id'] = newToken.id
+				newDevice = deviceModel.addDevice(args)
+				response = {"token" : newToken.token}
+			response['min'] = minv
+			response['recent'] = recentv
+			return response, 200
+		except Exception, e:
+			response['message'] = str(e)
+			return response, 400

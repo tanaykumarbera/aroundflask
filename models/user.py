@@ -47,12 +47,15 @@ class User(db.Model):
 	def setUserDetailFromFacebook(self, fb_token):
 		fb_url = "https://graph.facebook.com/me?access_token="+fb_token+"&fields=id,email,first_name,last_name,name,gender"
 		res = requests.get(fb_url)
-		res = json.loads(res.text)
-		self.userDetails['fb_id'] = res['id']
-		self.userDetails['fb_dp'] = "http://graph.facebook.com/"+str(res['id'])+"/picture?type=large"
-		self.userDetails['email'] = res['email']
-		self.userDetails['firstname'] = res['first_name']
-		self.userDetails['lastname'] = res['last_name']
-		self.userDetails['name'] = res['name']
-		self.userDetails['gender'] = res['gender']
+		if res.status_code == 200 :
+			res = json.loads(res.text)
+			self.userDetails['fb_id'] = res['id']
+			self.userDetails['fb_dp'] = "http://graph.facebook.com/"+str(res['id'])+"/picture?type=large"
+			self.userDetails['email'] = res['email']
+			self.userDetails['firstname'] = res['first_name']
+			self.userDetails['lastname'] = res['last_name']
+			self.userDetails['name'] = res['name']
+			self.userDetails['gender'] = res['gender']
+		else :
+			raise Exception("Invalid facebook token")
 
