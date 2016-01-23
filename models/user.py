@@ -59,3 +59,6 @@ class User(db.Model):
 		else :
 			raise Exception("Invalid facebook token")
 
+	def getUserById(self, params):
+		return self.query.get(params['id'])
+
