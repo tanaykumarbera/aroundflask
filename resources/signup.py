@@ -29,8 +29,8 @@ resource_fields['app_version']['recent'] = fields.String(attribute='recent')
 class Signup(Resource):
 	def post(self):
 		data = dict()
+		args = post_parser.parse_args()
 		try :
-			args = post_parser.parse_args()
 			userModel = User()
 			tokenModel = Token()
 			deviceModel = Device()

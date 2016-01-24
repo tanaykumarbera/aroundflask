@@ -29,10 +29,10 @@ resource_fields['app_version']['recent'] = fields.String(attribute='recent')
 class VerifyLogin(Resource):
 	def post(self):
 		data = dict()
+		args = post_parser.parse_args()
 		try :
 			appVersion = AppVeriosn()
 			minv, recentv = appVersion.getLatestVersion()
-			args = post_parser.parse_args()
 			deviceModel = Device()
 			device = deviceModel.getDeviceByDeviceId(args)
 			if args['token'] == device.token.token and datetime.now() < device.token.expiry:
