@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request
 from flask_restful import Resource, reqparse, fields, marshal
 from datetime import datetime, timedelta
 import requests
@@ -6,14 +6,12 @@ import requests
 from models.user import User
 from models.device import Device
 from models.appversion import AppVeriosn
-from common.errorhandler import ErrorHandler
-from common.utils import sqlAlchemyObjToDict
+from common.utils import sqlAlchemyObjToDict, ErrorWithCode
 
 post_parser = reqparse.RequestParser(bundle_errors=True)
-errorHandler = ErrorHandler()
 
 post_parser.add_argument('token', location='form', required=True, help='Token is required')
-post_parser.add_argument('device_id', location='form', required=True, help='Device id id required')
+post_parser.add_argument('device_id', location='form', required=True, help='Device id is required')
 
 resource_fields = dict()
 resource_fields['token'] = fields.String;
@@ -48,10 +46,10 @@ class VerifyLogin(Resource):
 					user = sqlAlchemyObjToDict(user)
 					data.update(user)
 				else:
-					raise Exception('Facebook access token is not valid.')
+					raise ErrorWithCode(401, 'Facebook access token is not valid.')
 			else:
-				raise Exception('Token is invalid or expired.')
+				raise ErrorWithCode(401, 'Token is invalid.')
 			return marshal(data, resource_fields), 200
 		except Exception, e:
 			data['message'] = str(e)
-			return data, 403
+			return data, e.code if hasattr(e, 'code') else 500

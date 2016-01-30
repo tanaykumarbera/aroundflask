@@ -1,5 +1,7 @@
 from models import db
 from token import Token
+from datetime import datetime
+from common.utils import sqlAlchemyObjToDict, ErrorWithCode
 
 class Device(db.Model):
 	__tablename__ = 'device'
@@ -26,5 +28,13 @@ class Device(db.Model):
 	def getDeviceByDeviceId(self, params):
 		device = self.query.filter_by(device_id=params['device_id']).first()
 		if device is None:
-			raise Exception("This device is not signed up before")
+			raise ErrorWithCode(404, "This device is not signed up before")
+		return device
+
+	def getDevice(self, params):
+		device = None
+		if 'token' in params:
+			device = self.query.join(Token).filter(Token.token==params['token']).filter(datetime.now() < Token.expiry).first()
+		if device is None:
+			raise ErrorWithCode(401, "This token is not valid.")
 		return device

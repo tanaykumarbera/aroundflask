@@ -12,7 +12,11 @@ application.config.update(globalconfig)
 
 from resources.signup import Signup
 from resources.verifylogin import VerifyLogin
+from resources.uploadimage import UploadImage
+from resources.location import LocationApi
 
 api = Api(application)
 api.add_resource(Signup, '/signup')
 api.add_resource(VerifyLogin, '/verifylogin')
+api.add_resource(UploadImage, '/uploadimage')
+api.add_resource(LocationApi, '/location')
