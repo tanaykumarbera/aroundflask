@@ -1,21 +1,15 @@
 import os
 from flask import request
 from flask_restful import Resource, reqparse, fields, marshal
-from datetime import datetime, timedelta
-import requests
 import werkzeug
 from datetime import datetime, timedelta
 from md5 import md5
 
-from models.user import User
 from models.device import Device
-from models.appversion import AppVeriosn
-from common.errorhandler import ErrorHandler
 from common.utils import sqlAlchemyObjToDict, fileAllowed, ErrorWithCode
 
 
 post_parser = reqparse.RequestParser(bundle_errors=True)
-errorHandler = ErrorHandler()
 
 
 post_parser.add_argument('token', location='form', required=True, help='token is required')

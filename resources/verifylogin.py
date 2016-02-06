@@ -10,8 +10,8 @@ from common.utils import sqlAlchemyObjToDict, ErrorWithCode
 
 post_parser = reqparse.RequestParser(bundle_errors=True)
 
-post_parser.add_argument('token', location='form', required=True, help='Token is required')
-post_parser.add_argument('device_id', location='form', required=True, help='Device id is required')
+post_parser.add_argument('token', location='form', required=True, help='token is required')
+post_parser.add_argument('device_id', location='form', required=True, help='device_id is required')
 
 resource_fields = dict()
 resource_fields['token'] = fields.String;

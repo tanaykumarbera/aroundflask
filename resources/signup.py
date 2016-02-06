@@ -4,11 +4,9 @@ from models.user import User
 from models.token import Token
 from models.device import Device
 from models.appversion import AppVeriosn
-from common.errorhandler import ErrorHandler
 from common.utils import sqlAlchemyObjToDict
 
 post_parser = reqparse.RequestParser(bundle_errors=True)
-errorHandler = ErrorHandler()
 
 post_parser.add_argument('fb_token', location='form', required=True, help='Facebook access token is required')
 post_parser.add_argument('device_id', location='form', required=True, help='Device id is required')

@@ -15,12 +15,11 @@ location_fields['country'] = fields.String(attribute='country_name');
 location_fields['country_code'] = fields.String(attribute='country_code');
 location_fields['description'] = fields.String(attribute='description');
 location_fields['coverimage'] = fields.String(attribute='coverimage');
+location_fields['cdnurl'] = fields.String(attribute='cdnurl');
 
 resource_fields = dict()
 resource_fields['message'] = fields.String(attribute='message');
 resource_fields['avllocation'] = fields.List(fields.Nested(location_fields));
-
-location_fields['cdnurl'] = fields.String(attribute='cdnurl');
 resource_fields['inlocation'] = fields.Nested(location_fields);
 
 class LocationApi(Resource):

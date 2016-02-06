@@ -1,7 +1,7 @@
 from models import db
 from token import Token
 from datetime import datetime
-from common.utils import sqlAlchemyObjToDict, ErrorWithCode
+from common.utils import ErrorWithCode
 
 class Device(db.Model):
 	__tablename__ = 'device'

@@ -12,18 +12,18 @@ class Location(db.Model):
 	cdnurl = 		db.Column(db.Text)
 
 	def getLocationFromPosition(self, params):
-		sql = ("SELECT l.name, l.description, l.coverimage, l.cdnurl, c.name AS country_name, c.code AS country_code "
+		sql = ("SELECT l.id, l.name, l.description, l.coverimage, l.cdnurl, c.name AS country_name, c.code AS country_code "
 				"FROM  `location` l,  `country` c "
 				"WHERE CONTAINS( l.polygon, GEOMFROMTEXT(  'POINT({0} {1})' ) ) "
 				"AND l.country_id = c.id")
 		sql = text(sql.format(params['lat'], params['lng']))
 		results = db.engine.execute(sql)
 		for row in results:
-			return sqlAlchemyProxyObjToDict(row, ['name', 'description', 'coverimage', 'cdnurl', 'country_code', 'country_name'])
+			return sqlAlchemyProxyObjToDict(row, ['id', 'name', 'description', 'coverimage', 'cdnurl', 'country_code', 'country_name'])
 		return None
 
 	def getAllLocations(self):
-		sql = ("SELECT l.name, l.description, l.coverimage, c.name AS country_name, c.code AS country_code "
+		sql = ("SELECT l.id, l.name, l.description, l.coverimage, l.cdnurl, c.name AS country_name, c.code AS country_code "
 				"FROM  `location` l,  `country` c "
 				"WHERE l.country_id = c.id "
 				"ORDER BY c.id")
@@ -32,6 +32,5 @@ class Location(db.Model):
 		results = db.engine.execute(sql)
 		locations = list()
 		for row in results:
-			locations.append(sqlAlchemyProxyObjToDict(row, ['name', 'description', 'coverimage', 'country_code', 'country_name']))
-		print locations
+			locations.append(sqlAlchemyProxyObjToDict(row, ['id', 'name', 'description', 'coverimage', 'cdnurl', 'country_code', 'country_name']))
 		return locations
