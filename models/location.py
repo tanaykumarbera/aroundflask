@@ -28,7 +28,6 @@ class Location(db.Model):
 				"WHERE l.country_id = c.id "
 				"ORDER BY c.id")
 		sql = text(sql)
-		print sql
 		results = db.engine.execute(sql)
 		locations = list()
 		for row in results:

@@ -1,3 +1,6 @@
+import requests
+import json
+
 def sqlAlchemyObjToDict(sqlalchemyobj):
 	d = {}
 	for column in sqlalchemyobj.__table__.columns:
@@ -17,6 +20,18 @@ def fileAllowed(filename):
 		return ext
 	else:
 		return None
+
+def getDistance(org, dest):
+	try:
+		googlrapilink = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&key={2}'
+		key = 'AIzaSyCxueY3PflWZWn90MsaLxBwTHx2DzFmG8w'
+		url = googlrapilink.format(org, dest, key)
+		r = requests.get(url)
+		d = json.loads(r.text)
+		distance_in_meters = d['rows'][0]['elements'][0]['distance']['value']
+		return distance_in_meters
+	except:
+		return 0
 
 class ErrorWithCode(Exception):
 	errors = dict()
