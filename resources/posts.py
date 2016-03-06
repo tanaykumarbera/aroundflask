@@ -30,7 +30,7 @@ class Posts(Resource):
 			postParams['image_name'] = args['imagename']
 			postParams['lat'] = lat
 			postParams['lng'] = lng
-			postParams['location_id'] = location ? location['id'] : 0
+			postParams['location_id'] = location['id'] if location else 0
 			postModel = PostsModel()
 			newPostId = postModel.addPost(postParams)
 			data['id'] = newPostId
