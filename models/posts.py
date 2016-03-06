@@ -3,7 +3,7 @@ from sqlalchemy import text
 from common.utils import sqlAlchemyProxyObjToDict, getDistance
 
 class Posts(db.Model):
-	__tablename__ = 'posts'
+	__tablename__ = 'post'
 
 	id = 			db.Column(db.Integer, primary_key = True)
 	user_id = 		db.Column(db.Integer)
@@ -12,7 +12,7 @@ class Posts(db.Model):
 	location_id = 	db.Column(db.Integer)
 
 	def addPost(self, params):
-		sql = ("INSERT INTO `posts` "
+		sql = ("INSERT INTO `post` "
 				"(`id`, `user_id`, `description`, `image_name`, `latlng`, `location_id`, `rank`, `add_date`) "
 				"VALUES (NULL, '{0}', '{1}', '{2}', GeomFromText('POINT({3} {4})',0), '{5}', '0', CURRENT_TIMESTAMP) "
 			)
@@ -31,7 +31,7 @@ class Posts(db.Model):
 				"`u`.`name`AS user_name, "
 				"`u`.`id` AS user_id, "
 				"CONCAT(`l`.`cdnurl`,`p`.`image_name`) AS image_url "
-				"FROM posts p, user u, location l "
+				"FROM post p, user u, location l "
 				"WHERE `p`.`id` NOT IN ({2}) "
 				"AND `l`.`id` = {3} "
 				"AND `p`.`user_id` = `u`.`id` "
@@ -52,3 +52,45 @@ class Posts(db.Model):
 			postDict['distance_in_miles'] = ml
 			posts.append(postDict)
 		return posts
+
+class Votes(db.Model):
+	__tablename__ = 'votes'
+
+	id = 		db.Column(db.Integer, primary_key = True)
+	user_id = 	db.Column(db.Integer)
+	post_id = 	db.Column(db.Integer)
+	vote = 		db.Column(db.Boolean)
+
+	def addvote(self, user_id, post_id, vote):
+		vote = self.query.filter_by(and_(user_id==user_id, post_id==post_id)).first()
+		if vote is None:
+			self.user_id = user_id
+			self.post_id = post_id
+			self.vote = vote
+			db.session.add(self)
+		else:
+			vote.vote = vote
+		db.session.commit()
+
+	def removevote(self, user_id, post_id):
+		self.query.filter_by(and_(user_id==user_id, post_id==post_id)).delete()
+
+	def getpostvote(self, post_id, user_id=0):
+		if user_id is 0:
+			user_vote = 0
+		else:
+			vote = self.query.filter_by(and_(posts_id==user_id, post_id==post_id)).first()
+			if vote is None:
+				user_vote = 0
+			else:
+				if vote.vote is True:
+					user_vote = 1
+				else:
+					user_vote = -1
+		upvotes = self.query.filter_by(and_(post_id==post_id, vote==True)).count()
+		downvotes = self.query.filter_by(and_(post_id==post_id, vote==False)).count()
+		return upvotes, downvotes, user_vote
+
+
+
+
