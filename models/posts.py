@@ -21,7 +21,8 @@ class Posts(db.Model):
 		return post.lastrowid
 
 	def getNearby(self, params):
-		sql = ("SELECT `p`.`id`, ("
+		sql = ("SELECT * FROM "
+				"(SELECT `p`.`id`, ("
 				"GLENGTH( LINESTRINGFROMWKB( LINESTRING("
 				"`p`.`latlng`, GEOMFROMTEXT( 'POINT({0} {1})' ) ) ) )"
 				") AS distance, "
@@ -35,10 +36,13 @@ class Posts(db.Model):
 				"WHERE `p`.`id` NOT IN ({2}) "
 				"AND `l`.`id` = {3} "
 				"AND `p`.`user_id` = `u`.`id` "
-				"ORDER BY distance ASC "
+				"ORDER BY distance ASC LIMIT 100) "
+				"AS t1 "
+				"WHERE t1.distance < 1 "
 				"LIMIT {4}"
 			)
 		sql = text(sql.format(params['lat'], params['lng'], params['not_ids'], params['location_id'], params['limits']))
+		print sql
 		rows = db.engine.execute(sql)
 		posts = list()
 		for post in rows:
@@ -50,6 +54,7 @@ class Posts(db.Model):
 			ml = "%2f"%ml
 			postDict['distance_in_kms'] = km
 			postDict['distance_in_miles'] = ml
+			print postDict
 			posts.append(postDict)
 		return posts
 

@@ -71,7 +71,7 @@ class Posts(Resource):
 			getParams['lng'] = lng
 			getParams['location_id'] = location['id']
 			getParams['user_id'] = device.user_id
-			getParams['not_ids'] = args['not_ids']
+			getParams['not_ids'] = '0' if args['not_ids']=='' else args['not_ids']
 			getParams['limits'] = args['limits']
 			postModel = PostsModel()
 			if args['feed_type'] == "nearby":
