@@ -55,6 +55,7 @@ class Posts(Resource):
 		post_fields['lng'] = fields.String(attribute='lng');
 		post_fields['distance_in_kms'] = fields.String(attribute='distance_in_kms');
 		post_fields['distance_in_miles'] = fields.String(attribute='distance_in_miles');
+		post_fields['distance'] = fields.String(attribute='distance');
 
 		list_post = dict()
 		list_post['nearby'] = fields.List(fields.Nested(post_fields));
