@@ -35,6 +35,4 @@ class Device(db.Model):
 		device = None
 		if 'token' in params:
 			device = self.query.join(Token).filter(Token.token==params['token']).filter(datetime.now() < Token.expiry).first()
-		if device is None:
-			raise ErrorWithCode(401, "This token is not valid.")
 		return device

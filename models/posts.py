@@ -41,7 +41,12 @@ class Posts(db.Model):
 				"WHERE t1.distance < 1 "
 				"LIMIT {4}"
 			)
-		sql = text(sql.format(params['lat'], params['lng'], params['not_ids'], params['location_id'], params['limits']))
+		# Check the third param location id
+		# Plan changed to get rid of locations
+		# So did this
+		# Will be changed later
+		# This will just help to get cdn url
+		sql = text(sql.format(params['lat'], params['lng'], params['not_ids'], 1, params['limits']))
 		print sql
 		rows = db.engine.execute(sql)
 		posts = list()

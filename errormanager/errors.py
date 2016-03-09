@@ -35,9 +35,13 @@ def locationValidate(lat_lng):
 	lng = lat_lng.split(',')[1].strip()
 	locationModel = Location()
 	inlocation = locationModel.getLocationFromPosition({'lat':lat, 'lng':lng})
+	print inlocation
 	# Now allowing posts from all location
 	# if inlocation is None:
 	# 	raise ValueError("This is an invalid location.")
+	if inlocation is None:
+		inlocation = dict()
+		inlocation['id'] = 0
 	data = dict()
 	data['lat_lng'] = lat_lng
 	data['data'] = inlocation
