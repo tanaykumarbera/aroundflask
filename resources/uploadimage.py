@@ -42,8 +42,12 @@ class UploadImage(Resource):
 	def resizeImage(self, imagePath):
 		original = Image.open(imagePath)
 		width, height = original.size
-		left = top = 0
-		right = bottom = width
+		# left = top = 0
+		# right = bottom = width
+		left = 0
+		right = width
+		top = (height-width) / 2
+		bottom = top+height
 		cropped = original.crop((left, top, right, bottom))
 		small = cropped.resize((1000,1000), Image.ANTIALIAS)
 		small.save(imagePath)
