@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse, fields, marshal
 import werkzeug
 from datetime import datetime, timedelta
 from md5 import md5
+from PIL import Image
 
 from models.device import Device
 from common.utils import sqlAlchemyObjToDict, fileAllowed, ErrorWithCode
@@ -29,9 +30,21 @@ class UploadImage(Resource):
 				raise ErrorWithCode(403, "File type not allowed")
 			imagename = md5(datetime.now().strftime("%b%d%Y%h%m%s%f")).hexdigest()+"."+ext
 			workingdir = os.getcwd()
-			imgfile.save(os.path.join(workingdir,'images',imagename))
+			imagePath = os.path.join(workingdir,'images',imagename)
+			imgfile.save(imagePath)
+			self.resizeImage(imagePath)
 			data['imagename'] = imagename
 			return data, 200
 		except Exception, e:
 			data['message'] = str(e)
 			return data, e.code if hasattr(e, 'code') else 500
+
+	def resizeImage(self, imagePath):
+		original = Image.open(imagePath)
+		width, height = original.size
+		left = top = 0
+		right = bottom = width
+		cropped = original.crop((left, top, right, bottom))
+		small = cropped_example.resize((1000,1000), Image.ANTIALIAS)
+		small.save(imagePath)
+
