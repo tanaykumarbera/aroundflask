@@ -47,7 +47,7 @@ class UploadImage(Resource):
 		left = 0
 		right = width
 		top = (height-width) / 2
-		bottom = top+height
+		bottom = top+width
 		cropped = original.crop((left, top, right, bottom))
 		small = cropped.resize((1000,1000), Image.ANTIALIAS)
 		small.save(imagePath)
