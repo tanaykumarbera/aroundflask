@@ -56,6 +56,9 @@ class Posts(Resource):
 		post_fields['distance_in_kms'] = fields.String(attribute='distance_in_kms');
 		post_fields['distance_in_miles'] = fields.String(attribute='distance_in_miles');
 		post_fields['distance'] = fields.String(attribute='distance');
+		post_fields['upvotes'] = fields.String(attribute='upvotes');
+		post_fields['downvotes'] = fields.String(attribute='downvotes');
+		post_fields['uservote'] = fields.String(attribute='uservote');
 
 		list_post = dict()
 		list_post['nearby'] = fields.List(fields.Nested(post_fields));

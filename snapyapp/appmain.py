@@ -15,6 +15,7 @@ from resources.verifylogin import VerifyLogin
 from resources.uploadimage import UploadImage
 from resources.location import LocationApi
 from resources.posts import Posts
+from resources.like import Like
 
 api = Api(application)
 api.add_resource(Signup, '/signup')
@@ -22,3 +23,4 @@ api.add_resource(VerifyLogin, '/verifylogin')
 api.add_resource(UploadImage, '/uploadimage')
 api.add_resource(LocationApi, '/location')
 api.add_resource(Posts, '/posts')
+api.add_resource(Like, '/like')

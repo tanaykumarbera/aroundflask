@@ -1,5 +1,5 @@
 from models import db
-from sqlalchemy import text
+from sqlalchemy import text, and_
 from common.utils import sqlAlchemyProxyObjToDict, getDistance
 
 class Posts(db.Model):
@@ -50,6 +50,7 @@ class Posts(db.Model):
 		print sql
 		rows = db.engine.execute(sql)
 		posts = list()
+		voteModel = Votes()
 		for post in rows:
 			postDict = sqlAlchemyProxyObjToDict(post, ['id', 'distance', 'description', 'user_name', 'user_id', 'image_url', 'lat', 'lng'])
 			m = getDistance(str(params['lat'])+","+str(params['lng']), str(postDict['lat'])+","+str(postDict['lng']))
@@ -59,6 +60,7 @@ class Posts(db.Model):
 			ml = "%2f"%ml
 			postDict['distance_in_kms'] = km
 			postDict['distance_in_miles'] = ml
+			postDict['upvotes'], postDict['downvotes'], postDict['uservote'] = voteModel.getpostvote(postDict['id'], params['user_id'])
 			print postDict
 			posts.append(postDict)
 		return posts
@@ -69,36 +71,37 @@ class Votes(db.Model):
 	id = 		db.Column(db.Integer, primary_key = True)
 	user_id = 	db.Column(db.Integer)
 	post_id = 	db.Column(db.Integer)
-	vote = 		db.Column(db.Boolean)
+	vote = 		db.Column(db.Integer)
 
+	# vote value should be 1 or -1
 	def addvote(self, user_id, post_id, vote):
-		vote = self.query.filter_by(and_(user_id==user_id, post_id==post_id)).first()
-		if vote is None:
+		voteRow = self.query.filter(Votes.user_id==user_id, Votes.post_id==post_id).one_or_none()
+		if voteRow is None:
 			self.user_id = user_id
 			self.post_id = post_id
 			self.vote = vote
 			db.session.add(self)
 		else:
-			vote.vote = vote
+			if(voteRow.vote == vote):
+				db.session.delete(voteRow)
+			else:
+				voteRow.vote = vote
 		db.session.commit()
 
-	def removevote(self, user_id, post_id):
-		self.query.filter_by(and_(user_id==user_id, post_id==post_id)).delete()
 
+
+	# returns total number of upvotes, downvotes and user's vote
 	def getpostvote(self, post_id, user_id=0):
 		if user_id is 0:
 			user_vote = 0
 		else:
-			vote = self.query.filter_by(and_(posts_id==user_id, post_id==post_id)).first()
+			vote = self.query.filter(Votes.user_id==user_id, Votes.post_id==post_id).one_or_none()
 			if vote is None:
 				user_vote = 0
 			else:
-				if vote.vote is True:
-					user_vote = 1
-				else:
-					user_vote = -1
-		upvotes = self.query.filter_by(and_(post_id==post_id, vote==True)).count()
-		downvotes = self.query.filter_by(and_(post_id==post_id, vote==False)).count()
+				user_vote = vote.vote
+		upvotes = self.query.filter(Votes.post_id==post_id, Votes.vote==1).count()
+		downvotes = self.query.filter(Votes.post_id==post_id, Votes.vote==-1).count()
 		return upvotes, downvotes, user_vote
 
 
