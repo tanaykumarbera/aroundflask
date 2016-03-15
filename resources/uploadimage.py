@@ -32,7 +32,7 @@ class UploadImage(Resource):
 			workingdir = os.getcwd()
 			imagePath = os.path.join(workingdir,'images',imagename)
 			imgfile.save(imagePath)
-			#self.resizeImage(imagePath)
+			self.resizeImage(imagePath)
 			data['imagename'] = imagename
 			return data, 200
 		except Exception, e:
