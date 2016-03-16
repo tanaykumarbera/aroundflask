@@ -21,7 +21,7 @@ class Posts(db.Model):
 									user_id=params['user_id'],
 									description=params['description'],
 									image_name=params['image_name'],
-									point='POINT('+str(params["lat"])+','+str(params["lng"])+')'
+									point='POINT('+str(params["lat"])+','+str(params["lng"])+')',
 									location_id=params['location_id'])
 		return post.lastrowid
 
