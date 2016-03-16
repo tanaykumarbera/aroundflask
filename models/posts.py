@@ -14,15 +14,14 @@ class Posts(db.Model):
 	def addPost(self, params):
 		sql = text("INSERT INTO `post` "
 				"(`id`, `user_id`, `description`, `image_name`, `latlng`, `location_id`, `rank`, `add_date`) "
-				"VALUES (NULL, :user_id, :description, :image_name, GeomFromText('POINT(:lat :lng)',0), :location_id, '0', CURRENT_TIMESTAMP) "
+				"VALUES (NULL, :user_id, :description, :image_name, GeomFromText(:point, 0), :location_id, '0', CURRENT_TIMESTAMP) "
 			)
 		#sql = text(sql.format(params['user_id'], params['description'], params['image_name'], params['lat'], params['lng'], params['location_id']))
 		post = db.engine.execute(sql,
 									user_id=params['user_id'],
 									description=params['description'],
 									image_name=params['image_name'],
-									lat=params['lat'],
-									lng=params['lng'],
+									point='POINT('+str(params['lat'])+','+str(params['lng'])+')'
 									location_id=params['location_id'])
 		return post.lastrowid
 
