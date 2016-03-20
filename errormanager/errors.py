@@ -2,7 +2,7 @@ import os
 from models.location import Location
 from models.device import Device
 from validate_email import validate_email
-
+import datetime
 
 def validateToken(token):
 	deviceModel = Device()
@@ -46,3 +46,16 @@ def locationValidate(lat_lng):
 	data['lat_lng'] = lat_lng
 	data['data'] = inlocation
 	return data
+
+def validateTimeStamp(dateText):
+	try:
+		d = datetime.datetime.strptime(dateText, '%Y-%m-%d %H:%M:%S')
+	except:
+		raise ValueError('Timestamp format doesn\'t match. Valid format - YYYY-MM-DD HH:mm:ss')
+	return dateText
+
+def validateWhen(when):
+	if when == 'before' or when == 'after':
+		return when
+	else:
+		return 'before'
