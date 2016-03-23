@@ -8,7 +8,6 @@ from common.utils import ErrorWithCode
 
 post_parser = reqparse.RequestParser(bundle_errors=True)
 
-post_parser.add_argument('lat_lng', location=['form', 'args'], type=locationValidate)
 post_parser.add_argument('token', location=['form', 'args'], type=validateToken)
 
 post_fields = dict()
@@ -29,6 +28,7 @@ post_fields['self'] = fields.Boolean(attribute='self');
 
 class Posts(Resource):
 	def post(self):
+		post_parser.add_argument('lat_lng', location=['form', 'args'], type=locationValidate)
 		post_parser.add_argument('imagename', location='form', type=imageName)
 		post_parser.add_argument('description', location='form', type=descriptionValidate)
 		data = dict()
@@ -54,6 +54,7 @@ class Posts(Resource):
 			return data, e.code if hasattr(e, 'code') else 500
 
 	def get(self):
+		post_parser.add_argument('lat_lng', location=['form', 'args'], type=locationValidate)
 		post_parser.add_argument('not_ids', location='args', default='0')
 		post_parser.add_argument('limits', location='args', default='10')
 		post_parser.add_argument('timestamp', location='args', type=validateTimeStamp)
@@ -92,3 +93,18 @@ class Posts(Resource):
 		# 	data = dict()
 		# 	data['message'] = str(e)
 		# 	return data, e.code if hasattr(e, 'code') else 500
+
+	def delete(self, post_id):
+		args = post_parser.parse_args()
+		device = args['token']['device'] # Object
+		user_id = device.user_id
+		try:
+			postModel = PostsModel()
+			postDeleted = postModel.deletePost(post_id, user_id)
+			if postDeleted:
+				return {'message': 'Deleted successfully!'}, 200
+			else:
+				return {'message': 'The post can not be deleted!'}, 200
+		except:
+			data['message'] = str(e)
+			return data, e.code if hasattr(e, 'code') else 500

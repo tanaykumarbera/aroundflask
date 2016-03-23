@@ -10,6 +10,7 @@ class Posts(db.Model):
 	description = 	db.Column(db.Text)
 	image_name = 	db.Column(db.Text)
 	location_id = 	db.Column(db.Integer)
+	deleted = 		db.Column(db.Boolean)
 
 	def addPost(self, params):
 
@@ -130,6 +131,14 @@ class Posts(db.Model):
 			postDict['self'] = True
 		return postDict
 
+	def deletePost(self, post_id, user_id):
+		postRow = self.query.filter(Posts.user_id==user_id, Posts.id==post_id).one_or_none()
+		if postRow is None:
+			return False
+		else:
+			postRow.deleted = True
+			db.session.commit()
+			return True
 
 class Votes(db.Model):
 	__tablename__ = 'votes'
