@@ -121,7 +121,7 @@ class Posts(db.Model):
 			postDict['distance_in_kms'] = km
 			postDict['distance_in_miles'] = ml
 			postDict['upvotes'], postDict['downvotes'], postDict['uservote'] = voteModel.getpostvote(postDict['id'], params['user_id'])
-			postDict['self'] = params['user_id'] == postDict['user_id']
+			postDict['self'] = int(params['user_id']) == int(postDict['user_id'])
 		else:
 			# Coming from add post
 			postDict['distance_in_kms'] = '0.000000'
