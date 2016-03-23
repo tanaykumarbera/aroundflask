@@ -104,7 +104,23 @@ class Posts(Resource):
 			if postDeleted:
 				return {'message': 'Deleted successfully!'}, 200
 			else:
-				return {'message': 'The post can not be deleted!'}, 200
+				return {'message': 'The post can not be deleted!'}, 403 # unauthorized
+		except:
+			data['message'] = str(e)
+			return data, e.code if hasattr(e, 'code') else 500
+
+	def put(self, post_id):
+		post_parser.add_argument('description', location='form', type=descriptionValidate)
+		args = post_parser.parse_args()
+		device = args['token']['device'] # Object
+		user_id = device.user_id
+		try:
+			postModel = PostsModel()
+			postUpdated = postModel.updatePost(post_id, user_id, args)
+			if postUpdated:
+				return {'message': 'Updated successfully!'}, 200
+			else:
+				return {'message': 'The post can not be updated!'}, 403
 		except:
 			data['message'] = str(e)
 			return data, e.code if hasattr(e, 'code') else 500

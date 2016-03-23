@@ -140,6 +140,15 @@ class Posts(db.Model):
 			db.session.commit()
 			return True
 
+	def updatePost(self, post_id, user_id, args):
+		postRow = self.query.filter(Posts.user_id==user_id, Posts.id==post_id).one_or_none()
+		if postRow is None:
+			return False
+		else:
+			postRow.description = args['description']
+			db.session.commit()
+			return True
+
 class Votes(db.Model):
 	__tablename__ = 'votes'
 
