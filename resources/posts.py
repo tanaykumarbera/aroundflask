@@ -12,7 +12,7 @@ post_parser.add_argument('token', location=['form', 'args'], type=validateToken)
 
 post_fields = dict()
 post_fields['post_id'] = fields.String(attribute='id');
-post_fields['post_description'] = fields.String(attribute='description');
+post_fields['description'] = fields.String(attribute='description');
 post_fields['user_name'] = fields.String(attribute='user_name');
 post_fields['user_id'] = fields.String(attribute='user_id');
 post_fields['image_url'] = fields.String(attribute='image_url');
