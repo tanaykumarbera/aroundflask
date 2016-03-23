@@ -57,6 +57,7 @@ class Posts(db.Model):
 				"FROM post p, user u, location l "
 
 				"WHERE `p`.`id` NOT IN ({2}) "
+				"AND `p`.`deleted` = 0 "
 				"{5}"
 				"AND `l`.`id` = {3} "
 				"AND `p`.`user_id` = `u`.`id` "
@@ -120,11 +121,13 @@ class Posts(db.Model):
 			postDict['distance_in_kms'] = km
 			postDict['distance_in_miles'] = ml
 			postDict['upvotes'], postDict['downvotes'], postDict['uservote'] = voteModel.getpostvote(postDict['id'], params['user_id'])
+			postDict['self'] = params['user_id'] == postDict['user_id']
 		else:
 			# Coming from add post
 			postDict['distance_in_kms'] = '0.000000'
 			postDict['distance_in_miles'] = '0.000000'
 			postDict['upvotes'], postDict['downvotes'], postDict['uservote'] = 1, 0, 1
+			postDict['self'] = True
 		return postDict
 
 

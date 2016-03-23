@@ -25,6 +25,7 @@ post_fields['distance'] = fields.String(attribute='distance');
 post_fields['upvotes'] = fields.String(attribute='upvotes');
 post_fields['downvotes'] = fields.String(attribute='downvotes');
 post_fields['uservote'] = fields.String(attribute='uservote');
+post_fields['self'] = fields.Boolean(attribute='self');
 
 class Posts(Resource):
 	def post(self):
