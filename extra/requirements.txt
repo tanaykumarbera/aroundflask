@@ -5,3 +5,9 @@ validate_email
 flask-sqlalchemy
 requests
 Pillow
+werkzeug
+jinja2
+itsdangerous
+click
+pytz
+MySQL-python
